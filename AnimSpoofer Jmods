@@ -1,0 +1,755 @@
+--[[
+ya se la saben chupenla
+--]]
+
+local Players = game:GetService("Players")
+local HttpService = game:GetService("HttpService")
+local MarketplaceService = game:GetService("MarketplaceService")
+local RunService = game:GetService("RunService")
+local LocalPlayer = Players.LocalPlayer
+if not LocalPlayer then return end
+
+local pastebinURL = "https://pastebin.com/raw/vYuhp298"
+
+
+
+local screenGui = Instance.new("ScreenGui")
+screenGui.Name = "AnimSelectorLogger"
+screenGui.ResetOnSpawn = false
+screenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
+
+
+
+local mainFrame = Instance.new("Frame")
+mainFrame.Size = UDim2.new(0, 700, 0, 400)
+mainFrame.Position = UDim2.new(0.5, -350, 0.5, -200)
+mainFrame.BackgroundColor3 = Color3.fromRGB(25, 25, 25)
+mainFrame.BorderSizePixel = 0
+mainFrame.Parent = screenGui
+mainFrame.Active = true
+mainFrame.Draggable = true
+
+local corner = Instance.new("UICorner")
+corner.CornerRadius = UDim.new(0, 8)
+corner.Parent = mainFrame
+
+local title = Instance.new("TextLabel", mainFrame)
+title.Size = UDim2.new(1, 0, 0, 34)
+title.Position = UDim2.new(0, 0, 0, 0)
+title.BackgroundTransparency = 1
+title.Text = "AnimSpoofer Jmods"
+title.TextColor3 = Color3.fromRGB(230,230,230)
+title.Font = Enum.Font.SourceSansBold
+title.TextSize = 18
+
+
+-- 🔹 Variable para el toggle
+local trackMovementAnimations = false
+
+-- 🔹 Botón Toggle (mismo tamaño que "📋 Copiar")
+local toggleMovementBtn = Instance.new("TextButton", mainFrame)
+toggleMovementBtn.Size = UDim2.new(0, 100, 0, 28)
+toggleMovementBtn.Position = UDim2.new(1, -140, 0, 4) -- justo antes del botón de cerrar
+toggleMovementBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+toggleMovementBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+toggleMovementBtn.Font = Enum.Font.SourceSansBold
+toggleMovementBtn.TextSize = 12
+toggleMovementBtn.Text = "❌ Movimiento"
+
+local toggleMovementCorner = Instance.new("UICorner")
+toggleMovementCorner.CornerRadius = UDim.new(0, 6)
+toggleMovementCorner.Parent = toggleMovementBtn
+
+toggleMovementBtn.MouseButton1Click:Connect(function()
+    trackMovementAnimations = not trackMovementAnimations
+    if trackMovementAnimations then
+        toggleMovementBtn.Text = "✅ Movimiento"
+        toggleMovementBtn.BackgroundColor3 = Color3.fromRGB(40, 167, 69)
+    else
+        toggleMovementBtn.Text = "❌ Movimiento"
+        toggleMovementBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+    end
+end)
+
+
+
+
+local closeBtn = Instance.new("TextButton", mainFrame)
+closeBtn.Size = UDim2.new(0, 28, 0, 28)
+closeBtn.Position = UDim2.new(1, -32, 0, 4)
+closeBtn.BackgroundColor3 = Color3.fromRGB(220, 53, 69)
+closeBtn.Text = "O"
+closeBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+closeBtn.Font = Enum.Font.SourceSansBold
+closeBtn.TextSize = 18
+closeBtn.BorderSizePixel = 0
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 6)
+closeCorner.Parent = closeBtn
+
+closeBtn.MouseButton1Click:Connect(function()
+    screenGui:Destroy()
+end)
+
+
+
+
+local trackerFrame = Instance.new("Frame", mainFrame)
+trackerFrame.Size = UDim2.new(1, -20, 0, 80)
+trackerFrame.Position = UDim2.new(0, 10, 0, 40)
+trackerFrame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+trackerFrame.BorderSizePixel = 0
+
+local trackerCorner = Instance.new("UICorner")
+trackerCorner.CornerRadius = UDim.new(0, 6)
+trackerCorner.Parent = trackerFrame
+
+local trackerLabel = Instance.new("TextLabel", trackerFrame)
+trackerLabel.Size = UDim2.new(0.3, 0, 1, 0)
+trackerLabel.Position = UDim2.new(0, 10, 0, 0)
+trackerLabel.BackgroundTransparency = 1
+trackerLabel.Text = "la wea se copia aca"
+trackerLabel.TextColor3 = Color3.fromRGB(100, 200, 255)
+trackerLabel.Font = Enum.Font.SourceSansBold
+trackerLabel.TextSize = 14
+trackerLabel.TextXAlignment = Enum.TextXAlignment.Left
+trackerLabel.TextYAlignment = Enum.TextYAlignment.Center
+
+local currentAssetIdBox = Instance.new("TextBox", trackerFrame)
+currentAssetIdBox.Size = UDim2.new(0.4, -20, 0, 35)
+currentAssetIdBox.Position = UDim2.new(0.3, 10, 0, 10)
+currentAssetIdBox.BackgroundColor3 = Color3.fromRGB(60, 60, 60)
+currentAssetIdBox.TextColor3 = Color3.fromRGB(255, 255, 100)
+currentAssetIdBox.Font = Enum.Font.Code
+currentAssetIdBox.TextSize = 16
+currentAssetIdBox.Text = "Ejecuta una animación..."
+currentAssetIdBox.TextEditable = false
+
+local currentAssetCorner = Instance.new("UICorner")
+currentAssetCorner.CornerRadius = UDim.new(0, 4)
+currentAssetCorner.Parent = currentAssetIdBox
+
+local copyCurrentBtn = Instance.new("TextButton", trackerFrame)
+copyCurrentBtn.Size = UDim2.new(0, 100, 0, 35)
+copyCurrentBtn.Position = UDim2.new(0.72, 0, 0, 10)
+copyCurrentBtn.Text = "📋 Copiar"
+copyCurrentBtn.Font = Enum.Font.SourceSansBold
+copyCurrentBtn.TextSize = 12
+copyCurrentBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+copyCurrentBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyCurrentBtn.BorderSizePixel = 0
+
+local copyCurrentCorner = Instance.new("UICorner")
+copyCurrentCorner.CornerRadius = UDim.new(0, 4)
+copyCurrentCorner.Parent = copyCurrentBtn
+
+local trackingStatusLabel = Instance.new("TextLabel", trackerFrame)
+trackingStatusLabel.Size = UDim2.new(0.4, -20, 0, 30)
+trackingStatusLabel.Position = UDim2.new(0.3, 10, 0, 45)
+trackingStatusLabel.BackgroundTransparency = 1
+trackingStatusLabel.Text = "🔍 Rastreando animaciones activas..."
+trackingStatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
+trackingStatusLabel.Font = Enum.Font.SourceSans
+trackingStatusLabel.TextSize = 12
+trackingStatusLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+
+
+
+
+
+
+
+-- LEFT: Logger con ScrollingFrame + TextLabel (auto-resize)
+local TextService = game:GetService("TextService")
+
+local leftFrame = Instance.new("Frame", mainFrame)
+leftFrame.Size = UDim2.new(0.35, 0, 1, -130)
+leftFrame.Position = UDim2.new(0, 10, 0, 130)
+leftFrame.BackgroundTransparency = 1
+
+local loggerLabel = Instance.new("TextLabel", leftFrame)
+loggerLabel.Size = UDim2.new(1, 0, 0, 20)
+loggerLabel.Position = UDim2.new(0, 0, 0, 0)
+loggerLabel.BackgroundTransparency = 1
+loggerLabel.Text = "📝 AssetIds Capturados:"
+loggerLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+loggerLabel.Font = Enum.Font.SourceSansBold
+loggerLabel.TextSize = 14
+loggerLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Scrolling frame que contendrá el texto
+local loggerScroll = Instance.new("ScrollingFrame", leftFrame)
+loggerScroll.Name = "LoggerScroll"
+loggerScroll.Size = UDim2.new(1, -10, 1, -70)
+loggerScroll.Position = UDim2.new(0, 5, 0, 25)
+loggerScroll.CanvasSize = UDim2.new(0, 0, 0, 0)
+loggerScroll.ScrollBarThickness = 6
+loggerScroll.BackgroundColor3 = Color3.fromRGB(12, 12, 12)
+loggerScroll.BorderSizePixel = 0
+loggerScroll.AutomaticCanvasSize = Enum.AutomaticSize.None
+loggerScroll.VerticalScrollBarInset = Enum.ScrollBarInset.Always
+
+local loggerCorner = Instance.new("UICorner")
+loggerCorner.CornerRadius = UDim.new(0, 4)
+loggerCorner.Parent = loggerScroll
+
+-- TextLabel que usaremos como "logger" (TextLabel permite medir TextBounds)
+local loggerBox = Instance.new("TextLabel", loggerScroll)
+loggerBox.Name = "LoggerBox"
+loggerBox.Position = UDim2.new(0, 5, 0, 5)
+loggerBox.Size = UDim2.new(1, -10, 0, 20)
+loggerBox.BackgroundTransparency = 1
+loggerBox.TextColor3 = Color3.fromRGB(230, 230, 230)
+loggerBox.Font = Enum.Font.Code
+loggerBox.TextSize = 12
+loggerBox.TextWrapped = true
+loggerBox.TextXAlignment = Enum.TextXAlignment.Left
+loggerBox.TextYAlignment = Enum.TextYAlignment.Top
+loggerBox.Text = ""
+
+-- Refresca CanvasSize cuando el texto cambie o cambie el ancho del scroll
+local function refreshLoggerCanvas()
+    local text = loggerBox.Text or ""
+    local width = math.max(10, loggerScroll.AbsoluteSize.X - 14)
+    local size = TextService:GetTextSize(text, loggerBox.TextSize, loggerBox.Font, Vector2.new(width, math.huge))
+    local height = math.max(20, math.ceil(size.Y) + 8)
+    loggerBox.Size = UDim2.new(1, -10, 0, height)
+    loggerScroll.CanvasSize = UDim2.new(0, 0, 0, height + 10)
+end
+
+loggerBox:GetPropertyChangedSignal("Text"):Connect(function()
+    refreshLoggerCanvas()
+    -- scrollear hacia abajo automáticamente
+    pcall(function()
+        local canvasY = loggerScroll.CanvasSize.Y.Offset
+        loggerScroll.CanvasPosition = Vector2.new(0, math.max(0, canvasY - loggerScroll.AbsoluteSize.Y + 10))
+    end)
+end)
+
+loggerScroll:GetPropertyChangedSignal("AbsoluteSize"):Connect(refreshLoggerCanvas)
+
+-- Botonera debajo del logger (igual que antes)
+local leftBtnsFrame = Instance.new("Frame", leftFrame)
+leftBtnsFrame.Size = UDim2.new(1, -10, 0, 38)
+leftBtnsFrame.Position = UDim2.new(0, 5, 1, -43)
+leftBtnsFrame.BackgroundTransparency = 1
+
+local copyBtn = Instance.new("TextButton", leftBtnsFrame)
+copyBtn.Size = UDim2.new(0, 120, 1, 0)
+copyBtn.Position = UDim2.new(0, 0, 0, 0)
+copyBtn.Text = "📋 Copiar Todo"
+copyBtn.Font = Enum.Font.SourceSans
+copyBtn.TextSize = 14
+copyBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 215)
+copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyBtn.BorderSizePixel = 0
+
+local copyCorner = Instance.new("UICorner")
+copyCorner.CornerRadius = UDim.new(0, 4)
+copyCorner.Parent = copyBtn
+
+local clearBtn = Instance.new("TextButton", leftBtnsFrame)
+clearBtn.Size = UDim2.new(0, 80, 1, 0)
+clearBtn.Position = UDim2.new(0, 130, 0, 0)
+clearBtn.Text = "🗑️ Limpiar"
+clearBtn.Font = Enum.Font.SourceSans
+clearBtn.TextSize = 14
+clearBtn.BackgroundColor3 = Color3.fromRGB(220, 53, 69)
+clearBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+clearBtn.BorderSizePixel = 0
+
+local clearCorner = Instance.new("UICorner")
+clearCorner.CornerRadius = UDim.new(0, 4)
+clearCorner.Parent = clearBtn
+
+-- Copiar / Limpiar (compatibilidad con resto del script que usa loggerBox.Text)
+copyBtn.MouseButton1Click:Connect(function()
+    local ok = pcall(function() setclipboard(loggerBox.Text) end)
+    if ok then
+        copyBtn.Text = "✅ Copiado"
+        task.delay(1, function() copyBtn.Text = "📋 Copiar Todo" end)
+    else
+        copyBtn.Text = "❌ Error"
+        task.delay(1, function() copyBtn.Text = "📋 Copiar Todo" end)
+    end
+end)
+
+clearBtn.MouseButton1Click:Connect(function()
+    loggerBox.Text = ""
+    currentAssetIdBox.Text = "Ejecuta una animación..."
+    lastTrackedAssetId = nil
+end)
+
+
+-- CENTER: Manual ID Input
+local centerFrame = Instance.new("Frame", mainFrame)
+centerFrame.Size = UDim2.new(0.28, 0, 1, -130)
+centerFrame.Position = UDim2.new(0.37, 0, 0, 130)
+centerFrame.BackgroundTransparency = 1
+
+local manualLabel = Instance.new("TextLabel", centerFrame)
+manualLabel.Size = UDim2.new(1, 0, 0, 20)
+manualLabel.Position = UDim2.new(0, 0, 0, 0)
+manualLabel.BackgroundTransparency = 1
+manualLabel.Text = "🎯 Pon CatalogID de una animacion:"
+manualLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+manualLabel.Font = Enum.Font.SourceSansBold
+manualLabel.TextSize = 14
+manualLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+local manualIdBox = Instance.new("TextBox", centerFrame)
+manualIdBox.Size = UDim2.new(1, -10, 0, 35)
+manualIdBox.Position = UDim2.new(0, 5, 0, 25)
+manualIdBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+manualIdBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+manualIdBox.PlaceholderText = "Ej: 133596366979822"
+manualIdBox.ClearTextOnFocus = false
+manualIdBox.Font = Enum.Font.SourceSans
+manualIdBox.TextSize = 16
+manualIdBox.Text = ""
+
+local manualIdCorner = Instance.new("UICorner")
+manualIdCorner.CornerRadius = UDim.new(0, 4)
+manualIdCorner.Parent = manualIdBox
+
+local convertBtn = Instance.new("TextButton", centerFrame)
+convertBtn.Size = UDim2.new(1, -10, 0, 35)
+convertBtn.Position = UDim2.new(0, 5, 0, 70)
+convertBtn.Text = "🔄 Ejecutar y Rastrear"
+convertBtn.Font = Enum.Font.SourceSansBold
+convertBtn.TextSize = 14
+convertBtn.BackgroundColor3 = Color3.fromRGB(40, 167, 69)
+convertBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+convertBtn.BorderSizePixel = 0
+
+local convertCorner = Instance.new("UICorner")
+convertCorner.CornerRadius = UDim.new(0, 4)
+convertCorner.Parent = convertBtn
+
+-- RIGHT: búsqueda + lista
+local rightFrame = Instance.new("Frame", mainFrame)
+rightFrame.Size = UDim2.new(0.35, -20, 1, -130)
+rightFrame.Position = UDim2.new(0.67, 0, 0, 130)
+rightFrame.BackgroundTransparency = 1
+
+local searchLabel = Instance.new("TextLabel", rightFrame)
+searchLabel.Size = UDim2.new(1, 0, 0, 20)
+searchLabel.Position = UDim2.new(0, 0, 0, 0)
+searchLabel.BackgroundTransparency = 1
+searchLabel.Text = "🔍 Animaciones por defecto:"
+searchLabel.TextColor3 = Color3.fromRGB(200, 200, 200)
+searchLabel.Font = Enum.Font.SourceSansBold
+searchLabel.TextSize = 14
+searchLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+
+
+local searchBox = Instance.new("TextBox", rightFrame)
+searchBox.Size = UDim2.new(1, -10, 0, 30)
+searchBox.Position = UDim2.new(0, 5, 0, 25)
+searchBox.PlaceholderText = "Buscar animación..."
+searchBox.ClearTextOnFocus = false
+searchBox.Font = Enum.Font.SourceSans
+searchBox.Text = ""
+searchBox.TextSize = 16
+searchBox.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
+searchBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+searchBox.BorderSizePixel = 0
+
+local searchCorner = Instance.new("UICorner")
+searchCorner.CornerRadius = UDim.new(0, 4)
+searchCorner.Parent = searchBox
+
+local scrollFrame = Instance.new("ScrollingFrame", rightFrame)
+scrollFrame.Size = UDim2.new(1, -10, 1, -70)
+scrollFrame.Position = UDim2.new(0, 5, 0, 60)
+scrollFrame.CanvasSize = UDim2.new(0,0,0,0)
+scrollFrame.ScrollBarThickness = 8
+scrollFrame.BackgroundColor3 = Color3.fromRGB(18,18,18)
+scrollFrame.BorderSizePixel = 0
+
+local scrollCorner = Instance.new("UICorner")
+scrollCorner.CornerRadius = UDim.new(0, 4)
+scrollCorner.Parent = scrollFrame
+
+local uiList = Instance.new("UIListLayout", scrollFrame)
+uiList.Padding = UDim.new(0,4)
+uiList.SortOrder = Enum.SortOrder.LayoutOrder
+
+local statusLabel = Instance.new("TextLabel", mainFrame)
+statusLabel.Size = UDim2.new(1, -20, 0, 26)
+statusLabel.Position = UDim2.new(0, 10, 1, -34)
+statusLabel.BackgroundTransparency = 1
+statusLabel.TextColor3 = Color3.fromRGB(200,200,200)
+statusLabel.Font = Enum.Font.SourceSans
+statusLabel.TextSize = 14
+statusLabel.Text = "Cargando..."
+
+local allEmotes = {}
+local isExecuting = false
+local buttons = {}
+local isTracking = false
+local lastTrackedAssetId = nil
+local trackingConnection = nil
+
+-- Obtener todas las animaciones del script Animate del jugador
+local function getAnimateScriptIds()
+    local animateIds = {}
+    local animateScript = LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Animate")
+    if animateScript then
+        for _, obj in ipairs(animateScript:GetDescendants()) do
+            if obj:IsA("Animation") and obj.AnimationId ~= "" then
+                local id = obj.AnimationId:match("rbxassetid://(%d+)")
+                    or obj.AnimationId:match("asset/?id=(%d+)")
+                    or obj.AnimationId:match("catalog/(%d+)")
+                    or obj.AnimationId:match("(%d+)$")
+                if id then
+                    animateIds[id] = true
+                end
+            end
+        end
+    end
+    return animateIds
+end
+
+
+local function setStatus(txt)
+    statusLabel.Text = tostring(txt)
+end
+
+
+local function startAssetIdTracking()
+    if trackingConnection then
+        trackingConnection:Disconnect()
+        trackingConnection = nil
+    end
+
+    local animateIds = getAnimateScriptIds() -- 🚫 IDs de movimiento a ignorar
+
+    lastTrackedAssetId = nil
+    isTracking = true
+    trackingStatusLabel.Text = "🔍 Rastreando animaciones activas..."
+
+    trackingConnection = RunService.Heartbeat:Connect(function()
+        if not isTracking then return end
+
+        local character = LocalPlayer.Character
+        if not character then return end
+
+        local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+        if not humanoid then return end
+
+        local animationTracks = humanoid:GetPlayingAnimationTracks()
+        if #animationTracks > 0 then
+            for _, track in ipairs(animationTracks) do
+                if track.Animation 
+                    and track.Animation.AnimationId 
+                    and track.IsPlaying 
+                    and track.WeightCurrent > 0 
+                    and track.TimePosition > 0 then
+
+                    local assetId = track.Animation.AnimationId:match("rbxassetid://(%d+)")
+                        or track.Animation.AnimationId:match("asset/?id=(%d+)")
+                        or track.Animation.AnimationId:match("catalog/(%d+)")
+                        or track.Animation.AnimationId:match("(%d+)$")
+
+                    
+if not trackMovementAnimations and assetId and animateIds[assetId] then
+    continue
+end
+
+                    if assetId and assetId ~= lastTrackedAssetId then
+                        lastTrackedAssetId = assetId
+                        currentAssetIdBox.Text = assetId
+                        trackingStatusLabel.Text = "✅ AssetId capturado: " .. assetId
+
+                        local animName = "Unknown_Animation"
+                        pcall(function()
+                            local productInfo = MarketplaceService:GetProductInfo(tonumber(assetId), Enum.InfoType.Asset)
+                            if productInfo and productInfo.Name then
+                                animName = productInfo.Name
+                            end
+                        end)
+
+                        if not loggerBox.Text:find(assetId, 1, true) then
+                            loggerBox.Text = loggerBox.Text .. animName .. " - " .. assetId .. "\n"
+                        end
+
+                        setStatus("✅ AssetId capturado: " .. assetId)
+                        break
+                    end
+                end
+            end
+        else
+            currentAssetIdBox.Text = "Sin animación activa"
+            trackingStatusLabel.Text = "⏳ Esperando animación..."
+        end
+    end)
+end
+
+
+
+local function stopAllAnimations(humanoid)
+    for _, track in ipairs(humanoid:GetPlayingAnimationTracks()) do
+        pcall(function()
+            track:Stop(0) -- detener sin transición
+            track:Destroy()
+        end)
+    end
+end
+
+
+-- Función para ejecutar animación y comenzar tracking
+local function executeAnimation(catalogId, emoteName)
+    if isExecuting then
+        setStatus("⚠ Espera un momento antes de otra animación...")
+        return
+    end
+    isExecuting = true
+    task.delay(2, function()
+        isExecuting = false
+    end)
+
+    local char = LocalPlayer.Character or LocalPlayer.CharacterAdded:Wait()
+    local hm = char:FindFirstChildWhichIsA("Humanoid")
+    if not hm then
+        setStatus("❌ No hay Humanoid")
+        return
+    end
+
+    -- 🔹 LIMPIEZA DE TRACKS ANTES DE EJECUTAR
+    for _, t in ipairs(hm:GetPlayingAnimationTracks()) do
+        pcall(function()
+            t:Stop()
+            t:Destroy()
+        end)
+    end
+
+    local name = emoteName or ("Manual_" .. tostring(catalogId))
+    setStatus("🔄 Ejecutando: " .. name)
+
+    startAssetIdTracking()
+
+    local success = false
+
+    -- Método 1
+    if hm.PlayEmoteAndGetAnimTrackById then
+        local ok, track = pcall(function()
+            return hm:PlayEmoteAndGetAnimTrackById(tostring(catalogId))
+        end)
+        if ok and track then
+            success = true
+            setStatus("✅ Animación ejecutada - Rastreando AssetId...")
+            pcall(function()
+                track.Looped = true
+                track:Play()
+            end)
+        end
+    end
+
+    -- Método 2
+    if not success then
+        local ok, track = pcall(function()
+            local anim = Instance.new("Animation")
+            anim.AnimationId = "rbxassetid://" .. tostring(catalogId)
+            local t = hm:LoadAnimation(anim)
+            t:Play()
+            return t
+        end)
+        if ok and track then
+            success = true
+            setStatus("✅ Animación ejecutada (fallback) - Rastreando AssetId...")
+            pcall(function()
+                track.Looped = true
+                track:Play()
+            end)
+        end
+    end
+
+    if not success then
+        setStatus("❌ Error ejecutando animación")
+        isTracking = false
+        if trackingConnection then
+            trackingConnection:Disconnect()
+        end
+    end
+end
+
+local function safeGetRaw(url)
+    local ok, raw = pcall(function() return HttpService:GetAsync(url) end)
+    if ok and raw and #raw > 0 then
+        return raw
+    end
+    ok, raw = pcall(function() return game:HttpGet(url) end)
+    if ok and raw and #raw > 0 then
+        return raw
+    end
+    return nil
+end
+
+local function parseEmotesFromRaw(raw)
+    local emotes = {}
+
+    local okJson, parsed = pcall(function() return HttpService:JSONDecode(raw) end)
+    if okJson and type(parsed) == "table" then
+        for _, v in ipairs(parsed) do
+            local name = v.name or v.Name or v[1]
+            local id = v.id or v.Id or v[2] or v.assetId or v.asset or v.AnimationId
+            if name and id then
+                table.insert(emotes, { name = tostring(name), id = tostring(id) })
+            end
+        end
+        if #emotes > 0 then return emotes end
+    end
+
+    for line in raw:gmatch("[^\r\n]+") do
+        local name1, id1 = line:match('addEmote%s*%(%s*"(.-)"%s*,%s*(%d+)')
+        if name1 and id1 then
+            table.insert(emotes, { name = name1, id = id1 })
+        else
+            local name2, id2 = line:match('"(.-)"%s*%-%-%s*(%d+)')
+            if name2 and id2 then
+                table.insert(emotes, { name = name2, id = id2 })
+            else
+                local n3, i3 = line:match('^%s*(.-)%s*%-%-%s*(%d+)%s*$')
+                if n3 and i3 then
+                    n3 = n3:gsub('^%s*(.-)%s*$', '%1')
+                    table.insert(emotes, { name = n3, id = i3 })
+                end
+            end
+        end
+    end
+
+    return emotes
+end
+
+local function clearButtons()
+    for _, btn in ipairs(buttons) do
+        if btn and btn.Parent then btn:Destroy() end
+    end
+    buttons = {}
+end
+
+local function updateCanvas()
+    scrollFrame.CanvasSize = UDim2.new(0, 0, 0, uiList.AbsoluteContentSize.Y + 10)
+end
+uiList:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(updateCanvas)
+
+local function createButtonsFor(emoteList)
+    clearButtons()
+    for i, em in ipairs(emoteList) do
+        local btn = Instance.new("TextButton")
+        btn.Size = UDim2.new(1, -10, 0, 32)
+        btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        btn.BorderSizePixel = 0
+        btn.TextColor3 = Color3.fromRGB(230, 230, 230)
+        btn.Font = Enum.Font.SourceSans
+        btn.TextSize = 13
+        btn.Text = em.name
+        btn.LayoutOrder = i
+        btn.Parent = scrollFrame
+
+        local btnCorner = Instance.new("UICorner")
+        btnCorner.CornerRadius = UDim.new(0, 4)
+        btnCorner.Parent = btn
+
+        btn.MouseEnter:Connect(function()
+            btn.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+        end)
+        
+        btn.MouseLeave:Connect(function()
+            btn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        end)
+
+        btn.MouseButton1Click:Connect(function()
+            executeAnimation(em.id, em.name)
+        end)
+
+        buttons[#buttons+1] = btn
+    end
+    updateCanvas()
+end
+
+-- EVENTOS
+searchBox:GetPropertyChangedSignal("Text"):Connect(function()
+    local query = searchBox.Text:lower()
+    for _, btn in ipairs(buttons) do
+        if query == "" then
+            btn.Visible = true
+        else
+            btn.Visible = string.find(btn.Text:lower(), query, 1, true) and true or false
+        end
+    end
+    updateCanvas()
+end)
+
+copyBtn.MouseButton1Click:Connect(function()
+    local ok = pcall(function() setclipboard(loggerBox.Text) end)
+    if ok then
+        copyBtn.Text = "✅ Copiado"
+        task.delay(1, function() copyBtn.Text = "📋 Copiar Todo" end)
+    else
+        copyBtn.Text = "❌ Error"
+        task.delay(1, function() copyBtn.Text = "📋 Copiar Todo" end)
+    end
+end)
+
+copyCurrentBtn.MouseButton1Click:Connect(function()
+    local assetId = currentAssetIdBox.Text
+    if assetId and assetId ~= "Ejecuta una animación..." and assetId ~= "Sin animación activa" then
+        local ok = pcall(function() setclipboard(assetId) end)
+        if ok then
+            copyCurrentBtn.Text = "✅ Copiado"
+            task.delay(1, function() copyCurrentBtn.Text = "📋 Copiar" end)
+        else
+            copyCurrentBtn.Text = "❌ Error"
+            task.delay(1, function() copyCurrentBtn.Text = "📋 Copiar" end)
+        end
+    end
+end)
+
+clearBtn.MouseButton1Click:Connect(function()
+    loggerBox.Text = ""
+    currentAssetIdBox.Text = "Ejecuta una animación..."
+    lastTrackedAssetId = nil
+end)
+
+convertBtn.MouseButton1Click:Connect(function()
+    local catalogId = manualIdBox.Text:match("(%d+)")
+    if catalogId then
+        executeAnimation(catalogId)
+        manualIdBox.Text = ""
+    else
+        setStatus("❌ ID inválido")
+    end
+end)
+
+manualIdBox.FocusLost:Connect(function(enterPressed)
+    if enterPressed then
+        convertBtn.MouseButton1Click:Fire()
+    end
+end)
+
+
+startAssetIdTracking()
+
+task.spawn(function()
+    setStatus("🔄 Descargando pastebin...")
+    
+    local raw = safeGetRaw(pastebinURL)
+    if not raw then
+        setStatus("❌ Error descarga pastebin")
+        return
+    end
+
+    local parsed = parseEmotesFromRaw(raw)
+    if parsed and #parsed > 0 then
+        allEmotes = parsed
+        createButtonsFor(allEmotes)
+        setStatus("✅ Cargadas " .. #allEmotes .. " animaciones - Tracker activo")
+    else
+        setStatus("❌ No se encontraron animaciones")
+    end
+end)
